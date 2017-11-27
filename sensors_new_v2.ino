@@ -17,21 +17,20 @@ int range = 15;
 int vInput[100]; //Voltage read array
 int vPass[4]; // Averages for passes
 
-
 double vAvg;
 double diskAvg = 0;
 
 // All disk values are +/- 15
 
-int diskClear = 500;
-int diskPaper = 652;
-int diskCloth = 603;
-int diskSandPaper = 223;
-int diskAluminum = 526;
-int diskSteel = 275;
+int diskClear = 520;
+int diskPaper = 665;
+int diskCloth = 622;
+int diskSandPaper = 222;
+int diskAluminum = 542;
+int diskSteel = 283; 
 
 void setup() {
-  
+
   // put your setup code here, to run once:
   servo0.attach(0);
   servo1.attach(1);
@@ -40,7 +39,7 @@ void setup() {
   servo4.attach(4);
   servo5.attach(5);
   servo6.attach(6);
-  
+
   //rgb
   analogWrite(7, 255);
   analogWrite(8, 255);
@@ -67,12 +66,10 @@ void loop() {
   servo6.write(30); // steel
 
   //Make sure that door is closed before running this code.
-  
-  
 
   int stepNumber = 220;
 
-  if(diskcount < 7) {
+  while(true) {
     diskAvg = 0;
     // Drop a single disk for sensing
     servo0.write(180);
@@ -81,7 +78,7 @@ void loop() {
 
     // Sense
     
-    for(int j = 0; j < 5; j++) {
+    for(int j = 0; j < 10; j++) {
       vAvg = 0;
       for(int i = 0; i < 100; i++) {
         int voltage = analogRead(0);
@@ -92,7 +89,6 @@ void loop() {
       diskAvg += vAvg;
     }
     diskAvg /= 5;
-
     
     // Separate
 
@@ -103,7 +99,7 @@ void loop() {
     } else if((diskAvg >= (diskPaper-range)) and (diskAvg <= (diskPaper+range))) {
       servo2.write(0);
     } else if((diskAvg >= (diskCloth-range)) and (diskAvg <= (diskCloth+range))) {
-      servo3.write(30);
+      servo3.write(35);
     } else if((diskAvg >= (diskSandPaper-range)) and (diskAvg <= (diskSandPaper+range))) {
       servo4.write(0);
     } else if((diskAvg >= (diskAluminum-range)) and (diskAvg <= (diskAluminum+range))) {
@@ -112,7 +108,7 @@ void loop() {
       servo6.write(0);
     }
 
-    delay(500);
+    delay(1000);
 
     // Drop disks
 
@@ -124,16 +120,5 @@ void loop() {
      }
 
     delay(5000);
-
-    // Close all gates
-//    servo0.write(32);
-//    servo1.write(0);
-//    servo2.write(30);
-//    servo3.write(0);
-//    servo4.write(30);
-//    servo5.write(0);
-//    servo6.write(30);
-    
-    diskcount++;
   }
 }
