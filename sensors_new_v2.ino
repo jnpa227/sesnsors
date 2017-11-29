@@ -12,7 +12,7 @@ Servo servo6;
 Stepper m0(360, 10, 11, 12, 13);
 
 int diskcount = 0;
-int range = 15;
+int range = 20;
 
 int vInput[100]; //Voltage read array
 int vPass[4]; // Averages for passes
@@ -22,12 +22,12 @@ double diskAvg = 0;
 
 // All disk values are +/- 15
 
-int diskClear = 520;
-int diskPaper = 665;
+int diskClear = 515;
+int diskPaper = 673;
 int diskCloth = 622;
 int diskSandPaper = 222;
 int diskAluminum = 542;
-int diskSteel = 283; 
+int diskSteel = 320;
 
 void setup() {
 
@@ -53,32 +53,35 @@ void setup() {
 
   m0.setSpeed(60);
 
+//  Serial.begin(9600);
 }
 
 void loop() {
-
-  servo0.write(90);
-  servo1.write(0); // clear disk
-  servo2.write(30); // paper disk
-  servo3.write(0); // cloth
-  servo4.write(30); // sand paper
-  servo5.write(0); // aluminum
-  servo6.write(30); // steel
 
   //Make sure that door is closed before running this code.
 
   int stepNumber = 220;
 
   while(true) {
+
+    servo0.write(90);
+    servo1.write(0); // clear disk
+    servo2.write(30); // paper disk
+    servo3.write(0); // cloth
+    servo4.write(30); // sand paper
+    servo5.write(0); // aluminum
+    servo6.write(30); // steel
+    
     diskAvg = 0;
-    // Drop a single disk for sensing
+    
+//    // Drop a single disk for sensing
     servo0.write(180);
     delay(100);
     servo0.write(100);
 
     // Sense
     
-    for(int j = 0; j < 10; j++) {
+    for(int j = 0; j < 5; j++) {
       vAvg = 0;
       for(int i = 0; i < 100; i++) {
         int voltage = analogRead(0);
@@ -89,23 +92,30 @@ void loop() {
       diskAvg += vAvg;
     }
     diskAvg /= 5;
+//    Serial.println(diskAvg);
     
     // Separate
 
     // Positive is counter clock wise
    
-    if((diskAvg >= (diskClear-range)) and (diskAvg <= (diskClear+range))) {
+    if((diskAvg >= (diskClear-20)) and (diskAvg <= (diskClear+20))) {
       servo1.write(30);
+      Serial.print("Servo 1 open");
     } else if((diskAvg >= (diskPaper-range)) and (diskAvg <= (diskPaper+range))) {
       servo2.write(0);
+      Serial.print("Servo 2 open");
     } else if((diskAvg >= (diskCloth-range)) and (diskAvg <= (diskCloth+range))) {
-      servo3.write(35);
+      servo3.write(40);
+      Serial.print("Servo 3 open");
     } else if((diskAvg >= (diskSandPaper-range)) and (diskAvg <= (diskSandPaper+range))) {
       servo4.write(0);
+      Serial.print("Servo 4 open");
     } else if((diskAvg >= (diskAluminum-range)) and (diskAvg <= (diskAluminum+range))) {
       servo5.write(30);
+      Serial.print("Servo 5 open");
     } else if((diskAvg >= (diskSteel-range)) and (diskAvg <= (diskSteel+range))) {
       servo6.write(0);
+      Serial.print("Servo 6 open");
     }
 
     delay(1000);
